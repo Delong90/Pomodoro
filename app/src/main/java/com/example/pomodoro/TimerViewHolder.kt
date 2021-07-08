@@ -3,6 +3,7 @@ package com.example.pomodoro
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
+import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodoro.databinding.TimerItemBinding
@@ -57,6 +58,9 @@ class TimerViewHolder(
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
     }
     private fun stopTimer(timer: Timer) {
+//        if (timer.currentMs<=0){
+//            binding.constraintLayout.background =
+//        }
         binding.startStopButton.text = resources.getText(R.string.start)
 
         this.countDownTimer?.cancel()
@@ -71,9 +75,9 @@ class TimerViewHolder(
 
             override fun onTick(millisUntilFinished: Long) {
                 binding.customView.setPeriod(timer.currentMsStart)
-                binding.customView.setCurrent(timer.current)
-                timer.current += interval + 300
-                timer.currentMs -= interval + 300
+                binding.customView.setCurrent(timer.current+1000)
+                timer.current += interval
+                timer.currentMs -= interval
                 binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
 //                binding.constraintLayout.background = resources.getColor(R.color.red,layoutPosition.set)
 
@@ -87,8 +91,11 @@ class TimerViewHolder(
 
     private fun Long.displayTime(timer: Timer): String {
         if (this <= 0L) {
+
             binding.startStopButton.text = "START"
+
             timer.current = 0L
+            binding.customView.setCurrent(timer.current)
             timer.currentMs = timer.currentMsStart
             listener.stop(timer.id, timer.currentMs, timer.currentMsStart,timer.current)
             return START_TIME
@@ -97,9 +104,9 @@ class TimerViewHolder(
         val h = this / 1000 / 3600
         val m = this / 1000 % 3600 / 60
         val s = this / 1000 % 60
-        val ms = this % 1000 / 10
 
-        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}:${displaySlot(ms)}"
+
+        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
 
     }
 
@@ -115,8 +122,8 @@ class TimerViewHolder(
 
     private companion object {
 
-        private var START_TIME = "00:00:00:00"
-        private const val UNIT_TEN_MS = 10L
+        private var START_TIME = "00:00:00"
+        private const val UNIT_TEN_MS = 1000L
         private const val PERIOD = 1000L * 60L * 60L * 24L // Day
 
     }

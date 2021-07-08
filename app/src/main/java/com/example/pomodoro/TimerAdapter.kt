@@ -1,5 +1,6 @@
 package com.example.pomodoro
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -12,6 +13,7 @@ class TimerAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = TimerItemBinding.inflate(layoutInflater, parent, false)
+
         return TimerViewHolder(binding, listener, binding.root.context.resources)
     }
 

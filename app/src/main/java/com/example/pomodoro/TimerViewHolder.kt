@@ -75,6 +75,8 @@ class TimerViewHolder(
                 timer.current += interval + 300
                 timer.currentMs -= interval + 300
                 binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
+//                binding.constraintLayout.background = resources.getColor(R.color.red,layoutPosition.set)
+
             }
 
             override fun onFinish() {

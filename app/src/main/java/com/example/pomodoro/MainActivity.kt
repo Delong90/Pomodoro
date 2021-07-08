@@ -70,9 +70,11 @@ class MainActivity : AppCompatActivity(),TimerListener {
 
     private fun checkToast(timerTime: String): Boolean{
         if (timerTime == "") return false
-        if (timerTime.toLong() > 2147483647) return false
+        if (timerTime.toLong() > 6001) return false
 
         return true
     }
+
+
 }
 

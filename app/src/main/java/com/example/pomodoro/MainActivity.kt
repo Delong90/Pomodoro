@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
     }
     override fun start(id: Int,current: Long) {
 
-            changeStopwatch(id, null, null, true, current)
+            changeStopwatch(id, null, null, true, null)
 
     }
 
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
         timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
     }
-    private fun changeStopwatch(id: Int, currentMs: Long?,currentMsStart: Long?, isStarted: Boolean,current: Long) {
+    private fun changeStopwatch(id: Int, currentMs: Long?,currentMsStart: Long?, isStarted: Boolean,current: Long?) {
         val newTimers = mutableListOf<Timer>()
         timers.forEach {
 
@@ -61,14 +61,14 @@ class MainActivity : AppCompatActivity(),TimerListener {
                     currentMs ?: it.currentMs,
                     currentMsStart ?: it.currentMsStart,
                     isStarted,
-                    current))
+                    current ?: it.current))
             } else{
 //                newTimers.add(it)
                 newTimers.add(Timer(it.id,
                     currentMs ?: it.currentMs,
                     currentMsStart ?: it.currentMsStart,
                     false,
-                    current))
+                    current ?: it.current))
             }
 
         }
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
         timers.clear()
         timers.addAll(newTimers)
     }
-    private fun changeStopwatchTwo(id: Int, currentMs: Long?,currentMsStart: Long?, isStarted: Boolean,current: Long) {
+    private fun changeStopwatchTwo(id: Int, currentMs: Long?,currentMsStart: Long?, isStarted: Boolean,current: Long?) {
         val newTimers = mutableListOf<Timer>()
         timers.forEach {
             if (it.id == id){
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
                     currentMs ?: it.currentMs,
                     currentMsStart ?: it.currentMsStart,
                     false,
-                    current))
+                    current ?: it.current))
             }else{
                 newTimers.add(it)
             }

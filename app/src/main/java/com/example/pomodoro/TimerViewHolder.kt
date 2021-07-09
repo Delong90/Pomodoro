@@ -21,6 +21,8 @@ class TimerViewHolder(
     fun bind(timer: Timer) {
         START_TIME = timer.currentMs.displayTime(timer)
         binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
+        binding.customView.setPeriod(timer.currentMsStart)
+        binding.customView.setCurrent(timer.current)
 
         if (timer.isStarted) {
             startTimer(timer)

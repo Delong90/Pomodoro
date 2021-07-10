@@ -7,9 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.pomodoro.databinding.TimerItemBinding
 
-class TimerAdapter(
-    private val listener: TimerListener
-    ) : ListAdapter<Timer, TimerViewHolder>(itemComparator) {
+class TimerAdapter(private val listener: TimerListener) : ListAdapter<Timer, TimerViewHolder>(itemComparator) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = TimerItemBinding.inflate(layoutInflater, parent, false)
@@ -18,6 +16,7 @@ class TimerAdapter(
     }
 
     override fun onBindViewHolder(holder: TimerViewHolder, position: Int) {
+
         holder.bind(getItem(position))
     }
     private companion object {

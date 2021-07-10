@@ -23,7 +23,10 @@ class TimerViewHolder(
         binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
         binding.customView.setPeriod(timer.currentMsStart)
         binding.customView.setCurrent(timer.current)
-
+        if (timer.numberOfOperation == 0){
+            binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
+        } else {binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
+        }
         if (timer.isStarted) {
             startTimer(timer)
         } else {
@@ -36,7 +39,7 @@ class TimerViewHolder(
         binding.startStopButton.setOnClickListener {
 
             if (timer.isStarted) {
-                listener.stop(timer.id, timer.currentMs, timer.currentMsStart, timer.current)
+                listener.stop(timer.id, timer.currentMs, timer.currentMsStart, timer.current,timer.numberOfOperation)
             } else {
                 listener.start(timer.id,timer.current)
             }
@@ -51,7 +54,7 @@ class TimerViewHolder(
 
     private fun startTimer(timer: Timer) {
         binding.startStopButton.text = resources.getText(R.string.stop)
-
+        binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
         this.countDownTimer?.cancel()
         this.countDownTimer = getCountDownTimer(timer)
         this.countDownTimer?.start()
@@ -60,9 +63,6 @@ class TimerViewHolder(
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
     }
     private fun stopTimer(timer: Timer) {
-//        if (timer.currentMs<=0){
-//            binding.constraintLayout.background =
-//        }
         binding.startStopButton.text = resources.getText(R.string.start)
 
         this.countDownTimer?.cancel()
@@ -78,8 +78,8 @@ class TimerViewHolder(
             override fun onTick(millisUntilFinished: Long) {
                 binding.customView.setPeriod(timer.currentMsStart)
                 binding.customView.setCurrent(timer.current+1000)
-                timer.current += interval
-                timer.currentMs -= interval
+                timer.current += interval + 6000
+                timer.currentMs -= interval + 6000
                 binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
 //                binding.constraintLayout.background = resources.getColor(R.color.red,layoutPosition.set)
 
@@ -99,7 +99,9 @@ class TimerViewHolder(
             timer.current = 0L
             binding.customView.setCurrent(timer.current)
             timer.currentMs = timer.currentMsStart
-            listener.stop(timer.id, timer.currentMs, timer.currentMsStart,timer.current)
+            timer.numberOfOperation = timer.numberOfOperation+1
+            listener.stop(timer.id, timer.currentMs, timer.currentMsStart,timer.current,timer.numberOfOperation)
+            binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
             return START_TIME
         }
 

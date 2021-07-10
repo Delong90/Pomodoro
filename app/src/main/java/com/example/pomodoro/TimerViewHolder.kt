@@ -3,7 +3,6 @@ package com.example.pomodoro
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
-import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodoro.databinding.TimerItemBinding
@@ -19,19 +18,28 @@ class TimerViewHolder(
     private var countDownTimer: CountDownTimer? = null
 
     fun bind(timer: Timer) {
-        START_TIME = timer.currentMsStart.displayTime(timer)
-        binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
+        START_TIME = timer.currentMsStart.displayTime()
+
+        binding.stopwatchTimer.text = timer.currentMs.displayTime()
+
         binding.customView.setPeriod(timer.currentMsStart)
         binding.customView.setCurrent(timer.current)
-        if (timer.numberOfOperation == 0){
-            binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
-        } else {binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
+
+
+        if (timer.numberOfOperation != 0 && timer.currentMs == timer.currentMsStart){
+            binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
+        } else {binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
         }
+
+
         if (timer.isStarted) {
             startTimer(timer)
-        } else {
+        }
+        else {
             stopTimer(timer)
         }
+
+
         initButtonsListeners(timer)
     }
 
@@ -80,28 +88,46 @@ class TimerViewHolder(
                 binding.customView.setCurrent(timer.current+1000)
                 timer.current += interval + 6000
                 timer.currentMs -= interval + 6000
-                binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
+                binding.stopwatchTimer.text = timer.currentMs.displayTime()
+//                println(timer.currentMs)
+//                println(timer.id)
+
+
+
+
+                if (timer.currentMs <= 0L) {
+                    binding.startStopButton.text = "START"
+                    timer.current = 0L
+                    binding.customView.setCurrent(timer.current)
+                    timer.currentMs = timer.currentMsStart
+                    timer.numberOfOperation = timer.numberOfOperation+1
+                    stopTimer(timer)
+                    listener.stop(timer.id, timer.currentMs, timer.currentMsStart,timer.current,timer.numberOfOperation)
+                    binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
+                }
 //                binding.constraintLayout.background = resources.getColor(R.color.red,layoutPosition.set)
 
             }
 
             override fun onFinish() {
-                binding.stopwatchTimer.text = timer.currentMs.displayTime(timer)
+                binding.stopwatchTimer.text = timer.currentMs.displayTime()
             }
         }
     }
 
-    private fun Long.displayTime(timer: Timer): String {
+
+
+
+
+
+//    ______________________________________________________________________________________
+//    ______________________________________________________________________________________
+//    ______________________________________________________________________________________
+//    ______________________________________________________________________________________
+//    ______________________________________________________________________________________
+
+    private fun Long.displayTime(): String {
         if (this <= 0L) {
-
-            binding.startStopButton.text = "START"
-
-            timer.current = 0L
-            binding.customView.setCurrent(timer.current)
-            timer.currentMs = timer.currentMsStart
-            timer.numberOfOperation = timer.numberOfOperation+1
-            listener.stop(timer.id, timer.currentMs, timer.currentMsStart,timer.current,timer.numberOfOperation)
-            binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
             return START_TIME
         }
 
@@ -131,6 +157,8 @@ class TimerViewHolder(
         private const val PERIOD = 1000L * 60L * 60L * 24L // Day
 
     }
+
+
 
 
 }

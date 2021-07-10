@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
                     false,
                     0L,0))
                 timerAdapter.submitList(timers.toList())
-                binding.editTextNumber.text = null
+//                binding.editTextNumber.text = null
             }else   {
                 Toast.makeText(this, "Invalid input!", Toast.LENGTH_LONG).show()
             }
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
 
     }
 
-    override fun stop(id: Int, currentMs: Long, currentMsStart: Long, current: Long,numberOfOperation:Int) {
+    override fun stop(id: Int, currentMs: Long, currentMsStart: Long, current: Long, numberOfOperation:Int) {
         changeStopwatchTwo(id, currentMs, currentMsStart, false,current,numberOfOperation)
     }
     override fun delete(id: Int) {
@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity(),TimerListener {
                     currentMsStart ?: it.currentMsStart,
                     isStarted,
                     current ?: it.current,numberOfOperation?:it.numberOfOperation))
-            } else{
+            }
+            else{
 //                newTimers.add(it)
                 newTimers.add(Timer(it.id,
                     currentMs ?: it.currentMs,

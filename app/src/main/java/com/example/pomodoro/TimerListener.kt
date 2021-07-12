@@ -1,9 +1,9 @@
 package com.example.pomodoro
 
 interface TimerListener {
-    fun start(id: Int, current: Long)
+    fun start(id: Int)
 
-    fun stop(id: Int, currentMs: Long, currentMsStart: Long, current: Long, numberOfOperations:Int)
+    fun stop(id: Int, currentMs: Long, current: Long, numberOfOperations:Int)
 
     fun delete(id: Int)
 }

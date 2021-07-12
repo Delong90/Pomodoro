@@ -40,36 +40,37 @@ class MainActivity : AppCompatActivity(),TimerListener {
         }
 
     }
-    override fun start(id: Int,current: Long) {
-
-            changeStopwatch(id, null, null, true, null,null)
-
+    override fun start(id: Int) {
+        changeStopwatch(id, null, true, null,null)
     }
 
-    override fun stop(id: Int, currentMs: Long, currentMsStart: Long, current: Long, numberOfOperation:Int) {
-        changeStopwatchTwo(id, currentMs, currentMsStart, false,current,numberOfOperation)
+    override fun stop(id: Int, currentMs: Long, current: Long, numberOfOperation:Int) {
+        changeStopwatch(id, currentMs, false,current,numberOfOperation)
     }
     override fun delete(id: Int) {
         timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
     }
-    private fun changeStopwatch(id: Int, currentMs: Long?,currentMsStart: Long?, isStarted: Boolean,current: Long?,numberOfOperation:Int?) {
+
+    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean,current: Long?,numberOfOperation:Int?) {
         val newTimers = mutableListOf<Timer>()
         timers.forEach {
             if (it.id == id && isStarted) {
                 newTimers.add(Timer(it.id,
                     currentMs ?: it.currentMs,
-                    currentMsStart ?: it.currentMsStart,
+                    it.currentMsStart,
                     isStarted,
-                    current ?: it.current,numberOfOperation?:it.numberOfOperation))
+                    current ?: it.current,
+                    numberOfOperation?:it.numberOfOperation))
             }
             else{
 //                newTimers.add(it)
                 newTimers.add(Timer(it.id,
-                    currentMs ?: it.currentMs,
-                    currentMsStart ?: it.currentMsStart,
+                    it.currentMs,
+                    it.currentMsStart,
                     false,
-                    current ?: it.current,numberOfOperation?:it.numberOfOperation))
+                    it.current,
+                    it.numberOfOperation))
             }
 
         }
@@ -77,24 +78,6 @@ class MainActivity : AppCompatActivity(),TimerListener {
         timers.clear()
         timers.addAll(newTimers)
         println("список таймеров после старт $timers")
-    }
-    private fun changeStopwatchTwo(id: Int, currentMs: Long?,currentMsStart: Long?, isStarted: Boolean,current: Long?,numberOfOperation:Int?) {
-        val newTimers = mutableListOf<Timer>()
-        timers.forEach {
-            if (it.id == id){
-                newTimers.add(Timer(it.id,
-                    currentMs ?: it.currentMs,
-                    currentMsStart ?: it.currentMsStart,
-                    false,
-                    current ?: it.current,numberOfOperation?:it.numberOfOperation))
-            }else{
-                newTimers.add(it)
-            }
-        }
-        timerAdapter.submitList(newTimers)
-        timers.clear()
-        timers.addAll(newTimers)
-        println("список таймеров после стоп $timers")
     }
 
     private fun checkToast(timerTime: String): Boolean{

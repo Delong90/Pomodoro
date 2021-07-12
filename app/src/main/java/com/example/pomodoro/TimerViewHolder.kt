@@ -38,7 +38,7 @@ class TimerViewHolder(
         }
         else {
 
-            stopTimer(timer)
+            stopTimer()
             println("перерисока stopTimer ${timer.id} + ${timer.isStarted}")
         }
 
@@ -50,12 +50,12 @@ class TimerViewHolder(
         binding.startStopButton.setOnClickListener {
 
             if (timer.isStarted) {
-                listener.stop(timer.id, timer.currentMs, timer.currentMsStart, timer.current,timer.numberOfOperation)
+                listener.stop(timer.id, timer.currentMs, timer.current,timer.numberOfOperation)
 //                println("stop timer.currentMs ${timer.currentMs}")
 //                stopTimer(timer)
 
             } else {
-                listener.start(timer.id,timer.current)
+                listener.start(timer.id)
 //                startTimer(timer)
 //                println("start")
 
@@ -79,7 +79,7 @@ class TimerViewHolder(
         binding.blinkingIndicator.isInvisible = false
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
     }
-    private fun stopTimer(timer: Timer) {
+    private fun stopTimer() {
         binding.startStopButton.text = resources.getText(R.string.start)
 
         this.countDownTimer?.cancel()
@@ -111,8 +111,8 @@ class TimerViewHolder(
                     binding.customView.setCurrent(timer.current)
                     timer.currentMs = timer.currentMsStart
                     timer.numberOfOperation = timer.numberOfOperation+1
-                    stopTimer(timer)
-                    listener.stop(timer.id, timer.currentMs, timer.currentMsStart,timer.current,timer.numberOfOperation)
+                    stopTimer()
+                    listener.stop(timer.id, timer.currentMs,timer.current,timer.numberOfOperation)
                     binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
                 }
 

@@ -30,16 +30,13 @@ class TimerViewHolder(
             binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
         } else {binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
         }
-        println("перерисока ${timer.id} + ${timer.isStarted}")
+
 
         if (timer.isStarted) {
-            println("перерисока startTimer ${timer.id} + ${timer.isStarted}")
             startTimer(timer)
         }
         else {
-
             stopTimer()
-            println("перерисока stopTimer ${timer.id} + ${timer.isStarted}")
         }
 
 
@@ -51,14 +48,8 @@ class TimerViewHolder(
 
             if (timer.isStarted) {
                 listener.stop(timer.id, timer.currentMs, timer.current,timer.numberOfOperation)
-//                println("stop timer.currentMs ${timer.currentMs}")
-//                stopTimer(timer)
-
             } else {
                 listener.start(timer.id)
-//                startTimer(timer)
-//                println("start")
-
             }
         }
 
@@ -98,7 +89,6 @@ class TimerViewHolder(
                 timer.current += interval + 6000
                 timer.currentMs -= interval + 6000
                 binding.stopwatchTimer.text = timer.currentMs.displayTime()
-//                println()
                 println(timer.currentMs)
                 println(timer.id)
 

@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
         timerAdapter.submitList(newTimers)
         timers.clear()
         timers.addAll(newTimers)
-        println(timers)
+        println("список таймеров после старт $timers")
     }
     private fun changeStopwatchTwo(id: Int, currentMs: Long?,currentMsStart: Long?, isStarted: Boolean,current: Long?,numberOfOperation:Int?) {
         val newTimers = mutableListOf<Timer>()
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
         timerAdapter.submitList(newTimers)
         timers.clear()
         timers.addAll(newTimers)
-        println(timers)
+        println("список таймеров после стоп $timers")
     }
 
     private fun checkToast(timerTime: String): Boolean{

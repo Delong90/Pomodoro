@@ -30,13 +30,16 @@ class TimerViewHolder(
             binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
         } else {binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
         }
-
+        println("перерисока ${timer.id} + ${timer.isStarted}")
 
         if (timer.isStarted) {
+            println("перерисока startTimer ${timer.id} + ${timer.isStarted}")
             startTimer(timer)
         }
         else {
+
             stopTimer(timer)
+            println("перерисока stopTimer ${timer.id} + ${timer.isStarted}")
         }
 
 
@@ -48,8 +51,14 @@ class TimerViewHolder(
 
             if (timer.isStarted) {
                 listener.stop(timer.id, timer.currentMs, timer.currentMsStart, timer.current,timer.numberOfOperation)
+//                println("stop timer.currentMs ${timer.currentMs}")
+//                stopTimer(timer)
+
             } else {
                 listener.start(timer.id,timer.current)
+//                startTimer(timer)
+//                println("start")
+
             }
         }
 
@@ -89,8 +98,9 @@ class TimerViewHolder(
                 timer.current += interval + 6000
                 timer.currentMs -= interval + 6000
                 binding.stopwatchTimer.text = timer.currentMs.displayTime()
-//                println(timer.currentMs)
-//                println(timer.id)
+//                println()
+                println(timer.currentMs)
+                println(timer.id)
 
 
 
@@ -105,7 +115,6 @@ class TimerViewHolder(
                     listener.stop(timer.id, timer.currentMs, timer.currentMsStart,timer.current,timer.numberOfOperation)
                     binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
                 }
-//                binding.constraintLayout.background = resources.getColor(R.color.red,layoutPosition.set)
 
             }
 
@@ -154,7 +163,7 @@ class TimerViewHolder(
 
         private var START_TIME = "00:00:00"
         private const val UNIT_TEN_MS = 1000L
-        private const val PERIOD = 1000L * 60L * 60L * 24L // Day
+        private var PERIOD = 1000L * 60L * 60L * 24L // Day
 
     }
 

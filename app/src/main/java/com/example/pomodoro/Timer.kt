@@ -5,6 +5,7 @@ data class Timer(
     var currentMs: Long,
     var currentMsStart: Long,
     var isStarted: Boolean,
-    var current: Long,
-    var numberOfOperation: Int
+    var numberOfOperation: Int,
+    var startTime: Long,
+    var forcedStop: Boolean
 )

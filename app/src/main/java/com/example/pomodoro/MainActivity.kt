@@ -27,50 +27,66 @@ class MainActivity : AppCompatActivity(),TimerListener {
 
         binding.addNewTimerButton.setOnClickListener {
             if (checkToast(binding.editTextNumber.text.toString())) {
-                timers.add(Timer(nextId++,
-                    binding.editTextNumber.text.toString().toLong() * 60000,
-                    binding.editTextNumber.text.toString().toLong() * 60000,
-                    false,
-                    0L,0))
+                timers.add(
+                    Timer(
+                        nextId++,
+                        0L,
+                        binding.editTextNumber.text.toString().toLong() * 60000,
+                        false, 0,
+                        System.currentTimeMillis(),
+                        false
+                    )
+                )
                 timerAdapter.submitList(timers.toList())
 //                binding.editTextNumber.text = null
-            }else   {
+            } else {
                 Toast.makeText(this, "Invalid input!", Toast.LENGTH_LONG).show()
             }
         }
 
     }
-    override fun start(id: Int) {
-        changeStopwatch(id, null, true, null,null)
+
+    override fun start(id: Int, startTime: Long) {
+        changeStopwatch(id, null, true, null, startTime, true)
     }
 
-    override fun stop(id: Int, currentMs: Long, current: Long, numberOfOperation:Int) {
-        changeStopwatch(id, currentMs, false,current,numberOfOperation)
+    override fun stop(id: Int, currentMs: Long, numberOfOperation: Int, startTime: Long) {
+        changeStopwatch(id, currentMs, false, numberOfOperation, startTime, true)
     }
+
     override fun delete(id: Int) {
         timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
     }
 
-    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean,current: Long?,numberOfOperation:Int?) {
+
+    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean, numberOfOperation: Int?, startTime: Long?, forcedStop: Boolean?) {
         val newTimers = mutableListOf<Timer>()
         timers.forEach {
             if (it.id == id && isStarted) {
-                newTimers.add(Timer(it.id,
-                    currentMs ?: it.currentMs,
-                    it.currentMsStart,
-                    isStarted,
-                    current ?: it.current,
-                    numberOfOperation?:it.numberOfOperation))
-            }
-            else{
-//                newTimers.add(it)
-                newTimers.add(Timer(it.id,
-                    it.currentMs,
-                    it.currentMsStart,
-                    false,
-                    it.current,
-                    it.numberOfOperation))
+                newTimers.add(
+                    Timer(
+                        it.id,
+                        currentMs ?: it.currentMs,
+                        it.currentMsStart,
+                        isStarted,
+                        numberOfOperation ?: it.numberOfOperation,
+                        startTime ?: it.startTime,
+                        forcedStop ?: it.forcedStop
+                    )
+                )
+            } else {
+                newTimers.add(
+                    Timer(
+                        it.id,
+                        it.currentMs,
+                        it.currentMsStart,
+                        false,
+                        it.numberOfOperation,
+                        startTime ?: it.startTime,
+                        it.forcedStop
+                    )
+                )
             }
 
         }
@@ -80,13 +96,14 @@ class MainActivity : AppCompatActivity(),TimerListener {
         println("список таймеров после старт $timers")
     }
 
-    private fun checkToast(timerTime: String): Boolean{
+
+    private fun checkToast(timerTime: String): Boolean {
         if (timerTime == "") return false
         if (timerTime.toLong() > 6001) return false
 
         return true
     }
-
-
 }
+
+
 

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodoro.databinding.TimerItemBinding
 
 
+
 class TimerViewHolder(
     private val binding: TimerItemBinding,
     private val listener: TimerListener,
@@ -20,13 +21,13 @@ class TimerViewHolder(
     fun bind(timer: Timer) {
         START_TIME = timer.currentMsStart.displayTime()
 
-        binding.stopwatchTimer.text = timer.currentMs.displayTime()
+        binding.stopwatchTimer.text = (timer.currentMsStart-timer.currentMs).displayTime()
 
         binding.customView.setPeriod(timer.currentMsStart)
-        binding.customView.setCurrent(timer.current)
+        binding.customView.setCurrent(timer.currentMs)
 
 
-        if (timer.numberOfOperation != 0 && timer.currentMs == timer.currentMsStart){
+        if (timer.numberOfOperation != 0 && timer.currentMs == 0L){
             binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
         } else {binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
         }
@@ -47,15 +48,17 @@ class TimerViewHolder(
         binding.startStopButton.setOnClickListener {
 
             if (timer.isStarted) {
-                listener.stop(timer.id, timer.currentMs, timer.current,timer.numberOfOperation)
+                listener.stop(timer.id, timer.currentMs,timer.numberOfOperation,timer.startTime)
             } else {
-                listener.start(timer.id)
+                if (!timer.forcedStop){
+                    timer.startTime = System.currentTimeMillis()
+                } else timer.startTime = System.currentTimeMillis()-timer.currentMs
+                listener.start(timer.id,timer.startTime)
             }
         }
 
         binding.deleteButton.setOnClickListener {
-            timer.current = 0L
-            binding.customView.setCurrent(timer.current)
+            binding.customView.setCurrent(0L)
             this.countDownTimer?.cancel()
             listener.delete(timer.id) }
     }
@@ -79,35 +82,29 @@ class TimerViewHolder(
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
     }
 
+
     private fun getCountDownTimer(timer: Timer): CountDownTimer {
         return object : CountDownTimer(PERIOD, UNIT_TEN_MS) {
-            val interval = UNIT_TEN_MS
 
             override fun onTick(millisUntilFinished: Long) {
                 binding.customView.setPeriod(timer.currentMsStart)
-                binding.customView.setCurrent(timer.current+1000)
-                timer.current += interval + 6000
-                timer.currentMs -= interval + 6000
-                binding.stopwatchTimer.text = timer.currentMs.displayTime()
-                println(timer.currentMs)
-                println(timer.id)
+                binding.customView.setCurrent(timer.currentMs)
+                timer.currentMs = (System.currentTimeMillis()-timer.startTime)
+                binding.stopwatchTimer.text = (timer.currentMsStart-timer.currentMs).displayTime()
+                println("${timer.id} ${timer.currentMs}")
 
 
-
-
-                if (timer.currentMs <= 0L) {
+                if (timer.currentMs >= timer.currentMsStart) {
                     binding.startStopButton.text = "START"
-                    timer.current = 0L
-                    binding.customView.setCurrent(timer.current)
-                    timer.currentMs = timer.currentMsStart
+                    binding.customView.setCurrent(0L)
+                    timer.currentMs = 0L
                     timer.numberOfOperation = timer.numberOfOperation+1
+                    timer.forcedStop = true
                     stopTimer()
-                    listener.stop(timer.id, timer.currentMs,timer.current,timer.numberOfOperation)
+                    listener.stop(timer.id, timer.currentMs,timer.numberOfOperation,timer.startTime)
                     binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
                 }
-
             }
-
             override fun onFinish() {
                 binding.stopwatchTimer.text = timer.currentMs.displayTime()
             }
@@ -152,8 +149,9 @@ class TimerViewHolder(
     private companion object {
 
         private var START_TIME = "00:00:00"
-        private const val UNIT_TEN_MS = 1000L
+        private const val UNIT_TEN_MS = 10L
         private var PERIOD = 1000L * 60L * 60L * 24L // Day
+        private const val INTERVAL = 10L
 
     }
 

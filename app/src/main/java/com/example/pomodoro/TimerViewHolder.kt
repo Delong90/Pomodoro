@@ -24,7 +24,7 @@ class TimerViewHolder(
         binding.stopwatchTimer.text = (timer.currentMsStart-timer.currentMs).displayTime()
 
         binding.customView.setPeriod(timer.currentMsStart)
-        binding.customView.setCurrent(timer.currentMsStart-timer.currentMs)
+        binding.customView.setCurrent(timer.currentMs)
 
 
         if (timer.numberOfOperation != 0 && timer.currentMs == 0L){
@@ -50,7 +50,7 @@ class TimerViewHolder(
             if (timer.isStarted) {
                 listener.stop(timer.id, timer.currentMs,timer.numberOfOperation,timer.startTime)
             } else {
-                if (!timer.forcedStop){
+                if (!timer.forcedStart){
                     timer.startTime = System.currentTimeMillis()
                 } else timer.startTime = System.currentTimeMillis()-timer.currentMs
                 listener.start(timer.id,timer.startTime)
@@ -88,7 +88,7 @@ class TimerViewHolder(
 
             override fun onTick(millisUntilFinished: Long) {
                 binding.customView.setPeriod(timer.currentMsStart)
-                binding.customView.setCurrent(timer.currentMsStart-timer.currentMs)
+                binding.customView.setCurrent(timer.currentMs)
                 timer.currentMs = (System.currentTimeMillis()-timer.startTime)
                 binding.stopwatchTimer.text = (timer.currentMsStart-timer.currentMs).displayTime()
                 println("${timer.id} ${timer.currentMs}")
@@ -99,10 +99,10 @@ class TimerViewHolder(
                     binding.customView.setCurrent(0L)
                     timer.currentMs = 0L
                     timer.numberOfOperation = timer.numberOfOperation+1
-                    timer.forcedStop = true
+                    timer.forcedStart = true
                     stopTimer()
                     listener.stop(timer.id, timer.currentMs,timer.numberOfOperation,timer.startTime)
-                    binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
+//                    binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
                 }
             }
             override fun onFinish() {

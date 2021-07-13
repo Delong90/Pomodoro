@@ -6,11 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pomodoro.databinding.ActivityMainBinding
-import android.os.CountDownTimer
 import androidx.lifecycle.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
 
@@ -43,8 +39,8 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                         0L,
                         binding.editTextNumber.text.toString().toLong() * 60000,
                         false, 0,
-                        System.currentTimeMillis(),
-                        false
+                        0L,
+                        forcedStart = false
                     )
                 )
                 timerAdapter.submitList(timers.toList())
@@ -53,8 +49,6 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                 Toast.makeText(this, "Invalid input!", Toast.LENGTH_LONG).show()
             }
         }
-
-
 
     }
 
@@ -67,6 +61,8 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
         changeStopwatch(id, currentMs, false, numberOfOperation, startTime, true)
     }
 
+
+
     override fun delete(id: Int) {
         var timerDelete = timers.find { it.id == id }
         if(timerDelete!!.isStarted) startTimeNotification = 0L
@@ -78,7 +74,20 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
     private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean, numberOfOperation: Int?, startTime: Long, forcedStop: Boolean?) {
         val newTimers = mutableListOf<Timer>()
         timers.forEach {
-            if (it.id == id && isStarted) {
+            if (it.isStarted && it.id!=id){
+                var currentMsNew = System.currentTimeMillis()-it.startTime
+                newTimers.add(
+                    Timer(
+                        it.id,
+                        currentMsNew,
+                        it.currentMsStart,
+                        false,
+                        numberOfOperation ?: it.numberOfOperation,
+                        startTime,
+                        forcedStop ?: it.forcedStart
+                    )
+                )
+            } else if (it.id == id && isStarted) {
                 startTimeNotification = it.currentMsStart + startTime
                 println("it.currentMs + it.startTime ${it.currentMs} + ${it.startTime}")
                 newTimers.add(
@@ -89,7 +98,7 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                         isStarted,
                         numberOfOperation ?: it.numberOfOperation,
                         startTime,
-                        forcedStop ?: it.forcedStop
+                        forcedStop ?: it.forcedStart
                     )
                 )
             } else {
@@ -101,7 +110,7 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                         false,
                         it.numberOfOperation,
                         startTime ?: it.startTime,
-                        it.forcedStop
+                        it.forcedStart
                     )
                 )
             }

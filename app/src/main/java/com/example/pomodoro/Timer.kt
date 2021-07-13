@@ -7,5 +7,5 @@ data class Timer(
     var isStarted: Boolean,
     var numberOfOperation: Int,
     var startTime: Long,
-    var forcedStop: Boolean
+    var forcedStart: Boolean
 )

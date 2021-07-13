@@ -1,24 +1,34 @@
 package com.example.pomodoro
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pomodoro.databinding.ActivityMainBinding
+import android.os.CountDownTimer
+import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(),TimerListener {
+class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
 
     private lateinit var binding: ActivityMainBinding
 
     private val timerAdapter = TimerAdapter(this)
     private val timers = mutableListOf<Timer>()
     private var nextId = 0
+    private var startTimeNotification = 0L
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(context)
@@ -44,6 +54,8 @@ class MainActivity : AppCompatActivity(),TimerListener {
             }
         }
 
+
+
     }
 
     override fun start(id: Int, startTime: Long) {
@@ -51,19 +63,24 @@ class MainActivity : AppCompatActivity(),TimerListener {
     }
 
     override fun stop(id: Int, currentMs: Long, numberOfOperation: Int, startTime: Long) {
+        startTimeNotification = 0L
         changeStopwatch(id, currentMs, false, numberOfOperation, startTime, true)
     }
 
     override fun delete(id: Int) {
+        var timerDelete = timers.find { it.id == id }
+        if(timerDelete!!.isStarted) startTimeNotification = 0L
         timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
     }
 
 
-    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean, numberOfOperation: Int?, startTime: Long?, forcedStop: Boolean?) {
+    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean, numberOfOperation: Int?, startTime: Long, forcedStop: Boolean?) {
         val newTimers = mutableListOf<Timer>()
         timers.forEach {
             if (it.id == id && isStarted) {
+                startTimeNotification = it.currentMsStart + startTime
+                println("it.currentMs + it.startTime ${it.currentMs} + ${it.startTime}")
                 newTimers.add(
                     Timer(
                         it.id,
@@ -71,7 +88,7 @@ class MainActivity : AppCompatActivity(),TimerListener {
                         it.currentMsStart,
                         isStarted,
                         numberOfOperation ?: it.numberOfOperation,
-                        startTime ?: it.startTime,
+                        startTime,
                         forcedStop ?: it.forcedStop
                     )
                 )
@@ -102,6 +119,21 @@ class MainActivity : AppCompatActivity(),TimerListener {
         if (timerTime.toLong() > 6001) return false
 
         return true
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onAppBackgrounded() {
+        val startIntent = Intent(this, ForegroundService::class.java)
+        startIntent.putExtra(COMMAND_ID, COMMAND_START)
+        startIntent.putExtra(STARTED_TIMER_TIME_MS, startTimeNotification)
+        startService(startIntent)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppForegrounded() {
+        val stopIntent = Intent(this, ForegroundService::class.java)
+        stopIntent.putExtra(COMMAND_ID, COMMAND_STOP)
+        startService(stopIntent)
     }
 }
 

@@ -24,7 +24,7 @@ class TimerViewHolder(
         binding.stopwatchTimer.text = (timer.currentMsStart-timer.currentMs).displayTime()
 
         binding.customView.setPeriod(timer.currentMsStart)
-        binding.customView.setCurrent(timer.currentMs)
+        binding.customView.setCurrent(timer.currentMsStart-timer.currentMs)
 
 
         if (timer.numberOfOperation != 0 && timer.currentMs == 0L){
@@ -88,7 +88,7 @@ class TimerViewHolder(
 
             override fun onTick(millisUntilFinished: Long) {
                 binding.customView.setPeriod(timer.currentMsStart)
-                binding.customView.setCurrent(timer.currentMs)
+                binding.customView.setCurrent(timer.currentMsStart-timer.currentMs)
                 timer.currentMs = (System.currentTimeMillis()-timer.startTime)
                 binding.stopwatchTimer.text = (timer.currentMsStart-timer.currentMs).displayTime()
                 println("${timer.id} ${timer.currentMs}")
@@ -151,7 +151,6 @@ class TimerViewHolder(
         private var START_TIME = "00:00:00"
         private const val UNIT_TEN_MS = 10L
         private var PERIOD = 1000L * 60L * 60L * 24L // Day
-        private const val INTERVAL = 10L
 
     }
 

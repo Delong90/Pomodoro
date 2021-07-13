@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                         nextId++,
                         0L,
                         binding.editTextNumber.text.toString().toLong() * 60000,
-                        false, 0,
+                        false,
                         0L,
                         forcedStart = false
                     )
@@ -53,38 +53,37 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
     }
 
     override fun start(id: Int, startTime: Long) {
-        changeStopwatch(id, null, true, null, startTime, true)
+        changeStopwatch(id, null, true, startTime)
     }
 
-    override fun stop(id: Int, currentMs: Long, numberOfOperation: Int, startTime: Long) {
+    override fun stop(id: Int, currentMs: Long, startTime: Long) {
         startTimeNotification = 0L
-        changeStopwatch(id, currentMs, false, numberOfOperation, startTime, true)
+        changeStopwatch(id, currentMs, false, startTime)
     }
 
 
 
     override fun delete(id: Int) {
-        var timerDelete = timers.find { it.id == id }
+        val timerDelete = timers.find { it.id == id }
         if(timerDelete!!.isStarted) startTimeNotification = 0L
         timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
     }
 
 
-    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean, numberOfOperation: Int?, startTime: Long, forcedStop: Boolean?) {
+    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean, startTime: Long) {
         val newTimers = mutableListOf<Timer>()
         timers.forEach {
             if (it.isStarted && it.id!=id){
-                var currentMsNew = System.currentTimeMillis()-it.startTime
+                val currentMsNew = System.currentTimeMillis()-it.startTime
                 newTimers.add(
                     Timer(
                         it.id,
                         currentMsNew,
                         it.currentMsStart,
                         false,
-                        numberOfOperation ?: it.numberOfOperation,
                         startTime,
-                        forcedStop ?: it.forcedStart
+                        true
                     )
                 )
             } else if (it.id == id && isStarted) {
@@ -96,9 +95,8 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                         currentMs ?: it.currentMs,
                         it.currentMsStart,
                         isStarted,
-                        numberOfOperation ?: it.numberOfOperation,
                         startTime,
-                        forcedStop ?: it.forcedStart
+                        true
                     )
                 )
             } else {
@@ -108,8 +106,7 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                         it.currentMs,
                         it.currentMsStart,
                         false,
-                        it.numberOfOperation,
-                        startTime ?: it.startTime,
+                        startTime,
                         it.forcedStart
                     )
                 )

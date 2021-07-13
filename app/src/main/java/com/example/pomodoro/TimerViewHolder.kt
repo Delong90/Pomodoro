@@ -19,7 +19,7 @@ class TimerViewHolder(
     private var countDownTimer: CountDownTimer? = null
 
     fun bind(timer: Timer) {
-        START_TIME = timer.currentMsStart.displayTime()
+        var START_TIME = timer.currentMsStart.displayTime()
 
         binding.stopwatchTimer.text = (timer.currentMsStart-timer.currentMs).displayTime()
 
@@ -27,16 +27,23 @@ class TimerViewHolder(
         binding.customView.setCurrent(timer.currentMs)
 
 
-        if (timer.numberOfOperation != 0 && timer.currentMs == 0L){
+        if (timer.forcedStart && timer.currentMs == 0L){
             binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
         } else {binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
         }
 
 
         if (timer.isStarted) {
+            binding.startStopButton.text = resources.getText(R.string.stop)
+            binding.startStopButton.setBackgroundColor(resources.getColor(R.color.teal_200))
+//            binding.deleteButton.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_delete_24_2))
+
             startTimer(timer)
         }
         else {
+            binding.startStopButton.text = resources.getText(R.string.start)
+            binding.startStopButton.setBackgroundColor(resources.getColor(R.color.purple_500))
+//            binding.deleteButton.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_delete_24))
             stopTimer()
         }
 
@@ -48,7 +55,7 @@ class TimerViewHolder(
         binding.startStopButton.setOnClickListener {
 
             if (timer.isStarted) {
-                listener.stop(timer.id, timer.currentMs,timer.numberOfOperation,timer.startTime)
+                listener.stop(timer.id, timer.currentMs,timer.startTime)
             } else {
                 if (!timer.forcedStart){
                     timer.startTime = System.currentTimeMillis()
@@ -64,7 +71,6 @@ class TimerViewHolder(
     }
 
     private fun startTimer(timer: Timer) {
-        binding.startStopButton.text = resources.getText(R.string.stop)
         binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.transparent))
         this.countDownTimer?.cancel()
         this.countDownTimer = getCountDownTimer(timer)
@@ -74,7 +80,6 @@ class TimerViewHolder(
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
     }
     private fun stopTimer() {
-        binding.startStopButton.text = resources.getText(R.string.start)
 
         this.countDownTimer?.cancel()
 
@@ -95,14 +100,9 @@ class TimerViewHolder(
 
 
                 if (timer.currentMs >= timer.currentMsStart) {
-                    binding.startStopButton.text = "START"
-                    binding.customView.setCurrent(0L)
                     timer.currentMs = 0L
-                    timer.numberOfOperation = timer.numberOfOperation+1
-                    timer.forcedStart = true
                     stopTimer()
-                    listener.stop(timer.id, timer.currentMs,timer.numberOfOperation,timer.startTime)
-//                    binding.constraintLayout.setBackgroundColor(resources.getColor(R.color.red))
+                    listener.stop(timer.id, timer.currentMs,timer.startTime)
                 }
             }
             override fun onFinish() {
@@ -115,40 +115,8 @@ class TimerViewHolder(
 
 
 
-
-//    ______________________________________________________________________________________
-//    ______________________________________________________________________________________
-//    ______________________________________________________________________________________
-//    ______________________________________________________________________________________
-//    ______________________________________________________________________________________
-
-    private fun Long.displayTime(): String {
-        if (this <= 0L) {
-            return START_TIME
-        }
-
-        val h = this / 1000 / 3600
-        val m = this / 1000 % 3600 / 60
-        val s = this / 1000 % 60
-
-
-        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
-
-    }
-
-
-
-    private fun displaySlot(count: Long): String {
-        return if (count / 10L > 0) {
-            "$count"
-        } else {
-            "0$count"
-        }
-    }
-
     private companion object {
 
-        private var START_TIME = "00:00:00"
         private const val UNIT_TEN_MS = 10L
         private var PERIOD = 1000L * 60L * 60L * 24L // Day
 

@@ -25,7 +25,7 @@ class ForegroundService : Service() {
             .setGroupSummary(false)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(getPendingIntent())
+//            .setContentIntent(getPendingIntent())
             .setSilent(true)
             .setShowWhen(false)
             .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)

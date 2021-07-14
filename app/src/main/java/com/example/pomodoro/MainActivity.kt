@@ -111,7 +111,6 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
                     )
                 )
             }
-
         }
         timerAdapter.submitList(newTimers)
         timers.clear()

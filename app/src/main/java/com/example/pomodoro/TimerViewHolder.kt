@@ -37,7 +37,6 @@ class TimerViewHolder(
             binding.startStopButton.text = resources.getText(R.string.stop)
             binding.startStopButton.setBackgroundColor(resources.getColor(R.color.teal_200))
 //            binding.deleteButton.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_delete_24_2))
-
             startTimer(timer)
         }
         else {
@@ -53,7 +52,6 @@ class TimerViewHolder(
 
     private fun initButtonsListeners(timer: Timer) {
         binding.startStopButton.setOnClickListener {
-
             if (timer.isStarted) {
                 listener.stop(timer.id, timer.currentMs,timer.startTime)
             } else {

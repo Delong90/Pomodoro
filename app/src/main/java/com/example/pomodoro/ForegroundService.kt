@@ -37,7 +37,7 @@ class ForegroundService : Service() {
             .setGroupSummary(false)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-//            .setContentIntent(getPendingIntent())  //при нажатии на нотификацию мы будем возвращаться в MainActivity.
+            .setContentIntent(getPendingIntent())  //при нажатии на нотификацию мы будем возвращаться в MainActivity.
             .setSilent(true)
             .setShowWhen(false)
             .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)
@@ -180,7 +180,7 @@ class ForegroundService : Service() {
 
     private fun getPendingIntent(): PendingIntent? {
         val resultIntent = Intent(this, MainActivity::class.java)
-        resultIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        resultIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         return PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_ONE_SHOT)
     }
 

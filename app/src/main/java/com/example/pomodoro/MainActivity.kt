@@ -66,7 +66,9 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
 
     override fun delete(id: Int) {
         val timerDelete = timers.find { it.id == id }
-        if(timerDelete!!.isStarted) startTimeNotification = 0L
+        if (timerDelete != null) {
+            if(timerDelete.isStarted) startTimeNotification = 0L
+        }
         timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
     }

@@ -3,6 +3,7 @@ package com.example.pomodoro
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pomodoro.databinding.ActivityMainBinding
@@ -139,6 +140,27 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
         val stopIntent = Intent(this, ForegroundService::class.java)
         stopIntent.putExtra(COMMAND_ID, COMMAND_STOP)
         startService(stopIntent)
+    }
+
+//    override fun onBackPressed() {
+//        startTimeNotification = 0L
+//        super.onBackPressed()
+//    }
+
+    override fun onBackPressed() {
+        startTimeNotification = 0L
+        AlertDialog.Builder(this).apply {
+            setTitle("Подтверждение")
+            setMessage("Вы уверены, что хотите выйти из программы?")
+
+            setPositiveButton("Да") { _, _ ->
+                super.onBackPressed()
+            }
+
+            setNegativeButton("Нет") { _, _ ->
+            }
+            setCancelable(true)
+        }.create().show()
     }
 }
 

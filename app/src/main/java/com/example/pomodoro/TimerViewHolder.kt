@@ -55,7 +55,7 @@ class TimerViewHolder(
             if (timer.isStarted) {
                 listener.stop(timer.id, timer.currentMs,timer.startTime)
             } else {
-                if (timer.forcedStart){
+                if (!timer.forcedStart){
                     timer.startTime = System.currentTimeMillis()
                 } else timer.startTime = System.currentTimeMillis()-timer.currentMs
                 listener.start(timer.id,timer.startTime)

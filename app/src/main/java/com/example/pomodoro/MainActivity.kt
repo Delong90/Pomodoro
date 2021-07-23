@@ -53,6 +53,10 @@ class MainActivity : AppCompatActivity(),TimerListener,LifecycleObserver {
 
     }
 
+    override fun onDestroy() {
+        onAppForegrounded()
+        super.onDestroy()
+    }
     override fun start(id: Int, startTime: Long) {
         changeStopwatch(id, null, true, startTime)
     }
